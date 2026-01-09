@@ -1,0 +1,40 @@
+# Java build
+target/
+build/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+HELP.md
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.settings/
+.classpath
+.project
+.factorypath
+
+# Logs, temp
+*.log
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.old
+*.orig
+
+# Archives / dumps
+*.gz
+*.zip
+
+# Spring Boot repackaged jars
+*.war
+*.jar

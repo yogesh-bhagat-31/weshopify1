@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: weshopify-authn-service
+    
+  data:
+    redis:
+      host: ${REDIS_SERVER_HOST}
+      port: ${REDIS_SERVER_PORT}
+#      password: ${REDIS_SERVER_PASSWORD:password}
+     
+server:
+  port: 5022
+  
+iam:
+ wso2: 
+   client-id: ${IAM_CLIENT_ID}
+   client-secret: ${IAM_CLIENT_SECRET}
+   scope: ${IAM_SCOPE:openid}
+   grant_type: ${IAM_GRANT_TYPE:password}
+   iam-base-uri: https://${IAM_HOST}:${IAM_PORT}
+   iam-token-uri: ${iam.wso2.iam-base-uri}/oauth2/token
+
+ 

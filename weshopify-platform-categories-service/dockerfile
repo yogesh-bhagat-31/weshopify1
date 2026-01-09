@@ -1,0 +1,13 @@
+FROM openjdk:17-jdk-slim as build
+
+ARG ARTIFACT_LOC=/opt/weshopify-categories
+
+RUN mkdir ${ARTIFACT_LOC}
+
+WORKDIR ${ARTIFACT_LOC}
+
+COPY target/weshopify-categories-service.jar ${WORKDIR}
+
+# ENTRYPOINT [ "java -jar weshopify-categories-service.jar" ]
+
+CMD ["sh","-c","java -jar weshopify-categories-service.jar"]

@@ -1,0 +1,80 @@
+ spring:
+  application:
+#    name: ${APP_NAME:weshopify-platform-categories-service} 
+    name: weshopify-platform-categories-service
+  data:
+    redis:
+      host: ${REDIS_SERVER_HOST:localhost}
+      port: ${REDIS_SERVER_PORT}
+#      password: ${REDIS_SERVER_PASSWORD:password}  
+
+    
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+      
+    show-sql: true
+    
+  profiles:
+    active:
+    - ${DB_PROFILE_ACTIVE:dev}
+
+ server:
+#  port: ${APP_PORT:5016}
+  port: 5016
+  
+ logging:
+   file:
+    name: weshopify-catogories
+   level:
+    root: info   
+   pattern:
+    level: "%5p [${spring.zipkin.service.name:${spring.application.name:}},%X{traceId:-},%X{spanId:-}]" 
+    
+    
+ management:
+  zipkin:
+    tracing:
+      endpoint: http://${ZIPKIN_HOST:127.0.0.1}:${ZIPKIN_PORT:9411}/api/v2/spans
+
+# eureka:
+#  client:
+#    register-with-eureka: true 
+#    service-url:
+#      defaultZone: http://localhost:8761     
+  
+---
+#DEV PROFILE
+spring:
+  config:
+    activate:
+      on-profile:
+      - dev
+  datasource:
+    driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver} 
+    url: ${DB_PROTOCOL:jdbc}:${DB_TYPE:mysql}://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_SCHEMA:weshopify-categories}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+ 
+---
+
+#QA PROFILE
+spring:
+  config:   
+    activate:
+      on-profile:
+      - qa
+  datasource:
+    driver-class-name: ${DB_DRIVER:org.h2.Driver} 
+    url: ${DB_PROTOCOL:jdbc}:${DB_TYPE:h2}:${DB_HOST:mem}:${DB_SCHEMA:weshopify-categories}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    
+    
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
+      path: ${H2_CONSOLE_PATH:/h2Console}
+      
+    

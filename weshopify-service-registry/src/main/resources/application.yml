@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: weshopify-service-registry
+    
+#server:
+#  port: 8761
+# 
+#           
+#eureka:
+#  client:
+#    register-with-eureka: false
+#    
+#    
+#  instance:
+#    prefer-ip-address: true
+
+server:
+  port: 8761   # Port on which the Eureka server runs
+
+eureka:
+  client:
+    registerWithEureka: false   # The Eureka server should not register itself
+    fetchRegistry: false       # The Eureka server should not fetch registry information
+  server: 
+    waitTimeInMsWhenSyncEmpty: 0   # How long the server should wait when syncing the registry
+  instance:
+    hostname: localhost          # Hostname where the Eureka server is running
+    leaseRenewalIntervalInSeconds: 10000  # How often to renew lease with clients
+    leaseExpirationDurationInSeconds: 30000  # How long a lease is valid
+
+    
+  

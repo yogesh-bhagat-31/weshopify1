@@ -1,0 +1,94 @@
+# Ye configuration API Gateway ki application ka naam set karta hai. Isse aap apne service ko identify kar sakte hain.
+spring:
+  application:
+    name: weshopify-platform-gateway  
+
+#automatic route discovery ki suvidha deti hai           
+  cloud:
+    gateway:
+       discovery:
+        locator:
+          enabled: true
+#Ye setting service IDs ko lower case mein convert nahi karti. Service IDs waise hi rahengi jaisa unka naam register hua hai. 
+          lower-case-service-id: false
+                 
+#       filter:
+#         request-rate-limiter:
+#           enabled: true
+#           default-key-resolver: weshopify-app-cache
+          
+       routes: 
+      #Categories Service route
+       - id: WESHOPIFY-PLATFORM-CATEGORIES-SERVICE
+         uri: lb://WESHOPIFY-PLATFORM-CATEGORIES-SERVICE 
+         predicates:
+          - Path=/gateway-categories-service/**
+         filters:
+          - RewritePath=/gateway-categories-service/(?<segment>.*),/${segment}
+#          - name: RequestRateLimiter(Created for category service)  
+              
+      #Brands Service route
+       - id: WESHOPIFY-BRANDS-SERVICE
+         uri: lb://WESHOPIFY-BRANDS-SERVICE
+         predicates:
+          - Path=/gateway-brands-service/**
+         filters:
+          - RewritePath=/gateway-brands-service/(?<segment>.*),/${segment}
+          
+#          args: 
+#           redis-rate-limiter.replenishRate: 2
+#           redis-rate-limiter.burstCapacity: 2
+#           redis-rate-limiter.requestedTokens: 1 
+          
+  data:
+    redis:
+      host: localhost
+      port: 6379 
+       
+#Ye Eureka server ka URL set karta hai, jahan se service registration aur discovery hota hai     
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_REGISTRY_HOST:localhost}:${SERVICE_REGISTRY_PORT:8761}/eureka/
+  instance:
+    hostname: ${SERVICE_REGISTRY_HOST:localhost}
+    prefer-ip-address: true
+    
+#Ye setting API Gateway management endpoint ko enable karti hai.        
+management:
+  endpoint:
+    gateway:
+      enabled: true
+
+#Ye setting management endpoints ko web exposure ke liye enable karti hai, aur sabhi endpoints ko include karti hai.
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "*"
+# Ye setting Redis health check ko enable karti hai.        
+  health:
+    redis:
+      enabled: true
+    
+    
+#logging.pattern.level mein traceId aur spanId ki information zipkin jaise distributed tracing tools ke liye useful hoti hai. 
+#
+#%5p:- Ye log level (jaise DEBUG, INFO, ERROR) ko 5 characters ke width mein format karta hai(logs ki width fix karta hai)
+#      Agar log levels different widths mein hote, to logs ko visually scan karna mushkil ho sakta tha..
+#
+#   
+#Trace Id:-(Service A se Service b tak kaise flow hua)
+#Ye ek unique identifier hota hai jo ek specific request ya transaction ko represent karta hai across multiple services.
+#Agar ek request ek service se dusri service tak jaati hai, to traceId use karke aap track kar sakte hain ki request ka flow kya tha.
+#
+#Span Id:- Kya operation hua ek service ke under like database query, external API call 
+#
+# imp :- logs tracing data ke saath integrate ho rahe hain
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:}, %X{traceId:-}, %X{spanId:-}]"
+                     
+server:
+  port: 5055
+  

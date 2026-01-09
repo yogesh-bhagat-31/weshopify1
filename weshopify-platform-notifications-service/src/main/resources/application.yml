@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: ${APP_NAME:weshopify-notifications-service} 
+     
+  jpa:
+    hibernate:
+      ddl-auto: update
+      
+  profiles:
+    active:
+    - ${DB_PROFILE_ACTIVE:dev}
+ 
+server: 
+  port: 5011
+#  port: ${APP_PORT:5014} 
+
+sendgrid:
+ api:
+   key: 
+   verifyEmail: http://${USER_SERVICE_HOST:localhost}:${USERS_SERVICE_PORT:5014}/users/verifyUser/
+   from: 
+   
+ mailJet:
+  api: 
+    key:  
+    secretkey:  
+    verifyEmail: http://${USER_SERVICE_HOST:localhost}:${USERS_SERVICE_PORT:5014}/users/verifyUser/
+    from: 
+    subject: Welcome to weshopify!
+ 
+--- 
+#DEV PROFILE
+spring:
+  datasource: 
+    driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}  
+    url: ${DB_PROTOCOL:jdbc}:${DB_TYPE:mysql}://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_SCHEMA:weshopify_notifications}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD} 
+  config:
+    activate:
+      on-profile:
+      - dev
+  
+---
+#QA PROFILE
+spring:
+  datasource:
+    driver-class-name: ${DB_DRIVER:org.h2.Driver} 
+    url: ${DB_PROTOCOL:jdbc}:${DB_TYPE:h2}:${DB_HOST:mem}:${DB_SCHEMA:weshopify_notifications}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  h2:
+    console:
+      enabled: true
+      path: /h2Console 
+  config:
+    activate:
+      on-profile:
+      - qa
+      
+
+
+ 
+    

@@ -1,0 +1,34 @@
+version: '3.8'    # Version of docker compose - Docker compose is a tool which we will use to compose more than one container
+services:
+ weshopify-categories-db-service:
+  container_name: weshopify-categories-db
+  image: mysql:latest
+  restart: on-failure
+  ports:
+   - 3308:3306
+  environment:
+   - MYSQL_DATABASE=categories-db
+   - MYSQL_ROOT_PASSWORD=root
+  #  - MYSQL_ROOT_HOST: "%"
+
+ weshopify-categories-app-service:
+   container_name: weshopify-categories-app
+   image: weshopify-categories-img
+   restart: no
+   ports:
+    - 5016:5016
+   environment:
+    - DB_HOST=weshopify-categories-db-service
+    - DB_PORT=3306
+    - DB_SCHEMA=categories-db
+    - DB_PASSWORD=root
+    - ZIPKIN_HOST=weshopify-zipkin-serverd
+
+#  weshopify-service-registry:
+#    container_name: weshopify-registry
+#    image: service-registry-img
+#    restart: no
+#    ports:
+#     - 8761:8761   
+ 
+

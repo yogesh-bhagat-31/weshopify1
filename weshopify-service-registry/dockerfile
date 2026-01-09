@@ -1,0 +1,13 @@
+FROM openjdk:17-jdk-slim as build
+
+ARG JAR_FILE_LOC=/opt/service-registry
+
+RUN mkdir ${JAR_FILE_LOC}
+
+WORKDIR ${JAR_FILE_LOC}
+
+COPY target/weshopify-service-registry.jar ${WORKDIR}
+
+CMD ["sh","-c","java -jar weshopify-service-registry.jar"]
+
+

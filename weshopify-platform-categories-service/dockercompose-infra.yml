@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+ weshopify-service-registry:
+  container_name: weshopify-registry
+  image: service-registry-img
+  restart: no
+  ports:
+   - 8761:8761
+
+ weshopify-zipkin-server:
+  container_name: weshopify-zipkin
+  image: openzipkin/zipkin
+  ports: 
+   - 9411:9411

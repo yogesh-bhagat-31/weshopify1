@@ -1,0 +1,115 @@
+spring:
+  application:
+    name: ${APP_NAME:weshopify-brands-service}
+   
+  data:
+    redis:
+      host: ${REDIS_SERVER_HOST}
+      port: ${REDIS_SERVER_PORT}
+#      password: ${REDIS_SERVER_PASSWORD:password} 
+
+  profiles:
+    active:
+#    - ${DB_PROFILE_ACTIVE:dev}
+     - dev
+    
+server:
+#  port: ${APP_PORT:5017}
+   port: 5017
+
+#eureka:
+#   client:
+#     register-with-eureka: true 
+#     service-url:
+#        defaultZone: http://localhost:8761
+  
+resilience4j:
+  circuitbreaker:
+    metrics:
+      enabled: true
+    configs:
+       default:  
+         register-health-indicator: true
+    instances:
+        create_brands_circuit:
+          minimum-number-of-calls: 5  # kitne calls allow hai.
+          failure-rate-threshold: 50  # 50% of 5 is around 3 , agar 3 request fail to circuit open ho jayega.
+          wait-duration-in-open-state: 30000 # 30 sec ke bad ye half open state main jayega:- cool period.
+          permitted-number-of-calls-in-half-open-state: 2 # Hald open state main phir se check hoga kitne request fail ho rahe hai.
+          
+  retry:
+    instances:
+      create_brands_retry:
+        #what are the no of attempts of retry pattern
+        #retry with the duration of 2s
+        max-attempts: 3
+        wait-duration: 2s
+ 
+ # aap 1 second mein sirf 10 requests bhej sakte hain aur
+ # phir har 5 seconds ke baad yeh restriction reset hogi.
+ # matlab jaise hi app 10 request bhejenge within one second
+ #  agle 5 second tak app koi request nahi bhej sakte.       
+  ratelimiter:
+    instances:
+      create_brands_ratelimiter:
+        register-health-indicator: true
+        # Here 60 seconds Only 10 request are allowed
+        timeout-duration: 1s
+        limit-for-period: 10 # Limit-for-period batata hai kitni requests allowed hain, yani 10
+        limit-refresh-period: 5s # kitne samay ke baad yeh restriction reset hogi, yani 5 seconds ke baad.
+          
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "*"
+    jmx:
+      exposure:
+        include:
+        - '*'
+  
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+      
+  
+  
+--- 
+#DEV Environment
+
+spring:
+  config:
+    activate:
+      on-profile:
+      - dev
+  data:
+    mongodb:
+      #Database should be created in mongo atlas mannually, later 
+      #we will create it through the docker automatically
+      database: yodb
+      uri: mongodb+srv://yogeshdb94:RnawXHLduvP54dYj@yobrand.sclaqfz.mongodb.net/?retryWrites=true&w=majority&appName=YoBrand
+      auto-index-creation: true 
+---      
+#QA Environment 
+spring:
+  config:
+    activate:
+      on-profile: 
+      - qa        
+       
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
+      path: ${H2_CONSOLE_PATH:/h2console}
+      
+  datasource:
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+    url: ${DB_PROTOCOL:jdbc}:${DB_TYPE:h2}:${DB_HOST:mem}:${DB_SCHEMA:brands-service}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}    
+      
+      
+      
+      
